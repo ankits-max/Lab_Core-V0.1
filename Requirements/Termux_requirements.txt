@@ -1,0 +1,14 @@
+pkg update
+pkg upgrade
+
+pkg install python
+pkg install git
+pkg install nodejs
+pkg install curl
+pkg install openssh
+pkg install nano
+pkg install vim
+pkg install jq
+
+pip install flask
+pip install requests
