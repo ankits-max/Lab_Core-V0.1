@@ -11,3 +11,10 @@ sudo apt install tmux
 sudo apt install htop
 sudo apt install i2c-tools
 sudo apt install python3-serial
+
+pip install flask
+pip install requests
+pip install psutil
+pip install pyserial
+pip install gpiozero
+pip install opencv-python
