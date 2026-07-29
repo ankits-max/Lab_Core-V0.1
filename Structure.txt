@@ -1,0 +1,25 @@
+LabCore/
+│
+├── dashboard/
+│   ├── index.html
+│   ├── style.css
+│   ├── app.js
+│
+├── pi/
+│   ├── app.py
+│   ├── services/
+│
+├── esp32/
+│   ├── firmware.ino
+│
+├── android/
+│   ├── scripts/
+│
+├── config/
+│   ├── services.json
+│
+├── docs/
+│
+├── logs/
+│
+└── README.md
