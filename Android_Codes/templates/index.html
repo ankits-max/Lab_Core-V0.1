@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>LabCore Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>LABCORE</h1>
+    <p>Multi-host device services dashboard</p>
+
+    <section>
+      <h2>Host selection</h2>
+      <p>Select the host you want to talk to. For remote hosts, enter full base URL (including http:// and port if not 80).</p>
+      <label><input type="radio" name="hostmode" value="local" checked> Local (this device)</label>
+      <label><input type="radio" name="hostmode" value="remote"> Remote</label>
+      <div id="remoteHostRow" style="display:none; margin-top:8px;">
+        <input id="remoteHost" type="text" placeholder="http://192.168.1.42:5000" style="width:100%" />
+        <input id="authToken" type="text" placeholder="Optional: Bearer token" style="width:100%; margin-top:6px;" />
+      </div>
+    </section>
+
+    <section>
+      <h2>Quick services (Android node)</h2>
+      <p>These call the /service/* endpoints on the selected host.</p>
+      <button id="btnFlashOn">Flashlight ON</button>
+      <button id="btnFlashOff">Flashlight OFF</button>
+      <button id="btnPhoto">Take Photo</button>
+      <pre id="quickStatus">Ready</pre>
+    </section>
+
+    <section>
+      <h2>Flasher / ROM installer</h2>
+      <p>Upload images to the selected host or pick an uploaded file and flash to a connected device. Flashing is dangerous — you must check "I understand" to enable the Flash button.</p>
+
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+        <select id="deviceType">
+          <option value="samsung">Samsung / Heimdall</option>
+          <option value="fastboot">Fastboot</option>
+          <option value="adb">ADB / Sideload</option>
+        </select>
+
+        <select id="targetPart">
+          <option value="recovery">recovery</option>
+          <option value="boot">boot</option>
+          <option value="system">system</option>
+          <option value="pit">pit</option>
+          <option value="cache">cache</option>
+          <option value="sideload">sideload</option>
+        </select>
+      </div>
+
+      <div>
+        <input id="fileInput" type="file" />
+        <button id="btnUpload">Upload to host</button>
+      </div>
+
+      <div style="margin-top:10px;">
+        <strong>Uploaded files on host:</strong>
+        <ul id="hostsFiles"></ul>
+      </div>
+
+      <div style="margin-top:10px;">
+        <label><input type="checkbox" id="confirmCheck"> I understand the risks of flashing and accept responsibility</label>
+      </div>
+
+      <div style="margin-top:10px;">
+        <button id="btnFlash" disabled>Flash selected file</button>
+      </div>
+
+      <div style="margin-top:10px;">
+        <label>Operation ID: <span id="opid">-</span></label>
+        <pre id="opStatus">-</pre>
+        <pre id="opLog">-</pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>Notes</h2>
+      <ul>
+        <li>The selected host must be reachable from your browser. For local use, choose Local.</li>
+        <li>For remote hosts, provide URL like http://192.168.1.42:5000 and an auth token if required.</li>
+        <li>Flashing runs on the selected host. This UI will upload files and call the host's /flasher endpoints.</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <script src="/static/flasher.js"></script>
+</body>
+</html>
