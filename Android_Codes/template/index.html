@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>LabCore</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>LABCORE</h1>
+
+<p>Android Service Node</p>
+
+<button onclick="fetch('/service/flashlight/on')">
+Flashlight ON
+</button>
+
+<button onclick="fetch('/service/flashlight/off')">
+Flashlight OFF
+</button>
+
+<button onclick="fetch('/service/photo')">
+Take Photo
+</button>
+
+<div id="status">
+
+Ready
+
+</div>
+
+</div>
+
+<script>
+
+const buttons=document.querySelectorAll("button");
+
+buttons.forEach(btn=>{
+
+btn.onclick=async()=>{
+
+const url=btn.getAttribute("onclick")
+.replace("fetch('","")
+.replace("')","");
+
+const res=await fetch(url);
+
+const data=await res.json();
+
+document.getElementById("status").innerHTML=
+JSON.stringify(data,null,2);
+
+};
+
+});
+
+</script>
+
+</body>
+</html>
