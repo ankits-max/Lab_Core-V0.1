@@ -10,7 +10,17 @@
     <h1>LABCORE</h1>
     <p>Multi-host device services dashboard</p>
 
-    <section>
+    <section id="platformSelectSection">
+      <h2>Choose platform</h2>
+      <p>Select the platform you want to manage. This configures the UI for device-specific apps.</p>
+      <div style="display:flex; gap:8px;">
+        <button id="btnPlatformAndroid">Android</button>
+        <button id="btnPlatformPi">Raspberry Pi</button>
+        <button id="btnPlatformLaptop">Laptop / PC</button>
+      </div>
+    </section>
+
+    <section id="hostConfigSection" style="display:none; margin-top:12px;">
       <h2>Host selection</h2>
       <p>Select the host you want to talk to. For remote hosts, enter full base URL (including http:// and port if not 80).</p>
       <label><input type="radio" name="hostmode" value="local" checked> Local (this device)</label>
@@ -21,59 +31,84 @@
       </div>
     </section>
 
-    <section>
-      <h2>Quick services (Android node)</h2>
-      <p>These call the /service/* endpoints on the selected host.</p>
-      <button id="btnFlashOn">Flashlight ON</button>
-      <button id="btnFlashOff">Flashlight OFF</button>
-      <button id="btnPhoto">Take Photo</button>
-      <pre id="quickStatus">Ready</pre>
-    </section>
-
-    <section>
-      <h2>Flasher / ROM installer</h2>
-      <p>Upload images to the selected host or pick an uploaded file and flash to a connected device. Flashing is dangerous — you must check "I understand" to enable the Flash button.</p>
-
-      <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
-        <select id="deviceType">
-          <option value="samsung">Samsung / Heimdall</option>
-          <option value="fastboot">Fastboot</option>
-          <option value="adb">ADB / Sideload</option>
-        </select>
-
-        <select id="targetPart">
-          <option value="recovery">recovery</option>
-          <option value="boot">boot</option>
-          <option value="system">system</option>
-          <option value="pit">pit</option>
-          <option value="cache">cache</option>
-          <option value="sideload">sideload</option>
-        </select>
-      </div>
+    <!-- Android UI -->
+    <section id="androidSection" style="display:none; margin-top:12px;">
+      <h2>Android node</h2>
+      <p>Android services and apps for this host.</p>
 
       <div>
-        <input id="fileInput" type="file" />
-        <button id="btnUpload">Upload to host</button>
+        <h3>Quick services</h3>
+        <p>These call the /service/* endpoints on the selected host.</p>
+        <button id="btnFlashOn">Flashlight ON</button>
+        <button id="btnFlashOff">Flashlight OFF</button>
+        <button id="btnPhoto">Take Photo</button>
+        <pre id="quickStatus">Ready</pre>
       </div>
 
-      <div style="margin-top:10px;">
-        <strong>Uploaded files on host:</strong>
-        <ul id="hostsFiles"></ul>
+      <div style="margin-top:12px;">
+        <h3>Apps</h3>
+        <p>Select an app to open.</p>
+        <button id="btnAppFlashlight">Flashlight (app)</button>
+        <button id="btnAppHeimdall">Heimdall (flasher) — disabled</button>
       </div>
 
-      <div style="margin-top:10px;">
-        <label><input type="checkbox" id="confirmCheck"> I understand the risks of flashing and accept responsibility</label>
-      </div>
+      <div style="margin-top:12px;">
+        <h3>Flasher / ROM installer</h3>
+        <p>Upload images to the selected host or pick an uploaded file and flash to a connected device. Flashing is dangerous — you must check "I understand" to enable the Flash button.</p>
 
-      <div style="margin-top:10px;">
-        <button id="btnFlash" disabled>Flash selected file</button>
-      </div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+          <select id="deviceType">
+            <option value="samsung">Samsung / Heimdall</option>
+            <option value="fastboot">Fastboot</option>
+            <option value="adb">ADB / Sideload</option>
+          </select>
 
-      <div style="margin-top:10px;">
-        <label>Operation ID: <span id="opid">-</span></label>
-        <pre id="opStatus">-</pre>
-        <pre id="opLog">-</pre>
+          <select id="targetPart">
+            <option value="recovery">recovery</option>
+            <option value="boot">boot</option>
+            <option value="system">system</option>
+            <option value="pit">pit</option>
+            <option value="cache">cache</option>
+            <option value="sideload">sideload</option>
+          </select>
+        </div>
+
+        <div>
+          <input id="fileInput" type="file" />
+          <button id="btnUpload">Upload to host</button>
+        </div>
+
+        <div style="margin-top:10px;">
+          <strong>Uploaded files on host:</strong>
+          <ul id="hostsFiles"></ul>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label><input type="checkbox" id="confirmCheck"> I understand the risks of flashing and accept responsibility</label>
+        </div>
+
+        <div style="margin-top:10px;">
+          <button id="btnFlash" disabled>Flash selected file</button>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label>Operation ID: <span id="opid">-</span></label>
+          <pre id="opStatus">-</pre>
+          <pre id="opLog">-</pre>
+        </div>
       </div>
+    </section>
+
+    <!-- Pi placeholder -->
+    <section id="piSection" style="display:none; margin-top:12px;">
+      <h2>Raspberry Pi node</h2>
+      <p>Placeholder: no Pi apps installed yet. This section is reserved for future Pi services.</p>
+    </section>
+
+    <!-- Laptop placeholder -->
+    <section id="laptopSection" style="display:none; margin-top:12px;">
+      <h2>Laptop / PC node</h2>
+      <p>Placeholder: no Laptop apps installed yet. This section is reserved for future PC services.</p>
     </section>
 
     <section>
