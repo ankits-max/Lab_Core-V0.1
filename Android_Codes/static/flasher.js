@@ -148,11 +148,11 @@
       // scroll to quick services
       const quick = document.getElementById('btnFlashOn');
       if(quick) quick.focus();
-      document.getElementById('quickStatus').textContent = 'Flashlight app opened.';
+      const qs = document.getElementById('quickStatus'); if(qs) qs.textContent = 'Flashlight app opened.';
     }else{
       // show flasher area and focus upload
       const up = document.getElementById('fileInput'); if(up) up.focus();
-      document.getElementById('opStatus').textContent = 'Flasher app opened.';
+      const os = document.getElementById('opStatus'); if(os) os.textContent = 'Flasher app opened.';
     }
     // refresh file list for flasher
     listFiles().catch(()=>{});
@@ -164,9 +164,26 @@
   const btnPlatformLaptop = document.getElementById('btnPlatformLaptop');
   if(btnPlatformAndroid){
     btnPlatformAndroid.addEventListener('click', ()=>{
-      // ask user whether to open flashlight or flasher
-      const openFlashlight = confirm('Open Flashlight app? Press OK for Flashlight, Cancel for Flasher');
-      if(openFlashlight) openAndroidApp('flashlight'); else openAndroidApp('flasher');
+      // show an in-page modal with choices (avoids blocked native dialogs)
+      let modal = document.getElementById('labcore-android-modal');
+      if(!modal){
+        modal = document.createElement('div');
+        modal.id = 'labcore-android-modal';
+        modal.style = 'position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+        modal.innerHTML = `
+          <div style="background:#111;color:#fff;padding:16px;border-radius:8px;max-width:320px;text-align:center;">
+            <h3 style="margin-top:0;">Android — Choose app</h3>
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;">
+              <button id="labcore-open-flashlight" style="padding:8px 12px;">Flashlight</button>
+              <button id="labcore-open-flasher" style="padding:8px 12px;">Flasher</button>
+            </div>
+            <div style="margin-top:12px;"><button id="labcore-close-modal" style="padding:6px 10px;background:#333;">Cancel</button></div>
+          </div>`;
+        document.body.appendChild(modal);
+        document.getElementById('labcore-open-flashlight').addEventListener('click', ()=>{ document.body.removeChild(modal); openAndroidApp('flashlight'); });
+        document.getElementById('labcore-open-flasher').addEventListener('click', ()=>{ document.body.removeChild(modal); openAndroidApp('flasher'); });
+        document.getElementById('labcore-close-modal').addEventListener('click', ()=>{ document.body.removeChild(modal); });
+      }
     });
   }
   if(btnPlatformPi){ btnPlatformPi.addEventListener('click', ()=>{ showSection('piSection'); }); }
@@ -200,5 +217,52 @@
   // show nothing until platform selected
   const hostCfg = document.getElementById('hostConfigSection'); if(hostCfg) hostCfg.style.display = 'none';
   document.getElementById('hostsFiles') && listFiles();
+
+  // nodes-uart canvas interaction: draw dot and notify backend if available
+  (function attachNodesUart(){
+    const nodesUart = document.getElementById('nodes-uart');
+    // try a few common canvas ids
+    const nodeCanvas = document.getElementById('nodeCanvas') || document.getElementById('nodes-canvas') || document.getElementById('nodesCanvas');
+    if(!nodesUart && !nodeCanvas) return;
+
+    // if canvas present, attach click handler that draws a dot
+    if(nodeCanvas && nodeCanvas.getContext){
+      const ctx = nodeCanvas.getContext('2d');
+      // make canvas high-DPI friendly
+      function resizeCanvas(){
+        const rect = nodeCanvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        nodeCanvas.width = rect.width * dpr;
+        nodeCanvas.height = rect.height * dpr;
+        nodeCanvas.style.width = rect.width + 'px';
+        nodeCanvas.style.height = rect.height + 'px';
+        ctx.scale(dpr,dpr);
+      }
+      // resize once
+      try{ resizeCanvas(); }catch(e){}
+      nodeCanvas.addEventListener('click', async function(ev){
+        const rect = nodeCanvas.getBoundingClientRect();
+        const x = Math.round(ev.clientX - rect.left);
+        const y = Math.round(ev.clientY - rect.top);
+        // draw a small circle
+        try{
+          ctx.fillStyle = '#2ecc71';
+          ctx.beginPath();
+          ctx.arc(x,y,6,0,Math.PI*2);
+          ctx.fill();
+        }catch(e){ console.debug('draw failed', e); }
+        const st = document.getElementById('opStatus'); if(st) st.textContent = `nodes-uart clicked at ${x},${y}`;
+        // attempt to notify backend endpoint (optional)
+        try{
+          await apiFetch('POST','/nodes/uart/click',{x,y});
+        }catch(e){ /* ignore: endpoint may not exist */ }
+      });
+    } else if(nodesUart){
+      // fallback: attach click to the nodesUart element itself
+      nodesUart.addEventListener('click', function(ev){
+        const st = document.getElementById('opStatus'); if(st) st.textContent = 'nodes-uart element clicked';
+      });
+    }
+  })();
 
 })();
